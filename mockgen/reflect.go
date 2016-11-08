@@ -41,8 +41,13 @@ func Reflect(importPath string, symbols []string) (*model.Package, error) {
 
 	progPath := *execOnly
 	if *execOnly == "" {
+		// Put program in working directory to pick up packages in vendor/ during build
+		wDir, err := os.Getwd()
+		if err != nil {
+			return nil, err
+		}
 		// We use TempDir instead of TempFile so we can control the filename.
-		tmpDir, err := ioutil.TempDir("", "gomock_reflect_")
+		tmpDir, err := ioutil.TempDir(wDir, "gomock_reflect_")
 		if err != nil {
 			return nil, err
 		}
